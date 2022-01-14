@@ -25,17 +25,9 @@ class _SplashScreenState extends State<SplashScreen> {
         ), () {
       FirebaseAuth.instance.authStateChanges().listen((User? user) {
         if (user == null) {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => WelcomeScreen(),
-              ));
+          Navigator.pushReplacementNamed(context, WelcomeScreen.id);
         } else {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomeScreen(),
-              ));
+          Navigator.pushReplacementNamed(context, HomeScreen.id);
         }
       });
     });

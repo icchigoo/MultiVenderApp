@@ -3,10 +3,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:foodie_app/Screens/home_screen.dart';
+import 'package:foodie_app/Screens/map_screen.dart';
 import 'package:foodie_app/Screens/splash_screen.dart';
 
 import 'package:foodie_app/Screens/welcome_screen.dart';
 import 'package:foodie_app/providers/auth_provider.dart';
+import 'package:foodie_app/providers/location_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -16,6 +18,9 @@ void main() async {
     providers: [
       ChangeNotifierProvider(
         create: (_) => AuthProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => LocationProvider(),
       ),
     ],
     child: MyApp(),
@@ -34,6 +39,7 @@ class MyApp extends StatelessWidget {
         SplashScreen.id: (context) => SplashScreen(),
         HomeScreen.id: (context) => HomeScreen(),
         WelcomeScreen.id: (context) => WelcomeScreen(),
+        MapScreen.id: (context) => MapScreen(),
       },
     );
   }

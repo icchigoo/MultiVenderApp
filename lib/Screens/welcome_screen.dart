@@ -1,12 +1,20 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, deprecated_member_use, avoid_unnecessary_containers, use_key_in_widget_constructors, must_be_immutable, unused_field, prefer_final_fields, prefer_const_constructors, unused_local_variable
+// ignore_for_file: prefer_const_literals_to_create_immutables, deprecated_member_use, avoid_unnecessary_containers, use_key_in_widget_constructors, must_be_immutable, unused_field, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:foodie_app/Screens/map_screen.dart';
 import 'package:foodie_app/Screens/onboard_screen.dart';
 import 'package:foodie_app/providers/auth_provider.dart';
+import 'package:foodie_app/providers/location_provider.dart';
 import 'package:provider/provider.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   static const String id = 'welcome-screen';
+
+  @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
@@ -65,20 +73,31 @@ class WelcomeScreen extends StatelessWidget {
                           child: AbsorbPointer(
                             absorbing: _validPhoneNumber ? false : true,
                             child: FlatButton(
+                              onPressed: () {
+                                myState(() {
+                                  auth.loading = true;
+                                });
+                                String number =
+                                    '+977${_phoneNumberController.text}';
+                                auth.verifyPhone(context, number).then((value) {
+                                  _phoneNumberController.clear();
+                                  auth.loading = false;
+                                });
+                              },
                               color: _validPhoneNumber
                                   ? Theme.of(context).primaryColor
                                   : Colors.grey,
-                              onPressed: () {
-                                String number =
-                                    '+977${_phoneNumberController.text}';
-                                auth.verifyPhone(context, number);
-                              },
-                              child: Text(
-                                _validPhoneNumber
-                                    ? 'CONTINUE'
-                                    : 'ENTER PHONE NUMBER',
-                                style: TextStyle(color: Colors.white),
-                              ),
+                              child: auth.loading
+                                  ? CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                    )
+                                  : Text(
+                                      _validPhoneNumber
+                                          ? 'CONTINUE'
+                                          : 'ENTER PHONE NUMBER',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                             ),
                           ),
                         ),
@@ -92,6 +111,8 @@ class WelcomeScreen extends StatelessWidget {
         ),
       );
     }
+
+    final locationData = Provider.of<LocationProvider>(context, listen: false);
 
     return Scaffold(
       body: Padding(
@@ -123,9 +144,31 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 FlatButton(
                   color: Colors.deepOrangeAccent,
-                  child: Text('SET DELIVERY LOCATION',
-                      style: TextStyle(color: Colors.white)),
-                  onPressed: () {},
+                  child: locationData.loading
+                      ? CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        )
+                      : Text('SET DELIVERY LOCATION',
+                          style: TextStyle(color: Colors.white)),
+                  onPressed: () async {
+                    setState(() {
+                      locationData.loading = true;
+                    });
+
+                    await locationData.getCurrentPosition();
+                    if (locationData.permissionAllowed == true) {
+                      Navigator.pushReplacementNamed(context, MapScreen.id);
+                      setState(() {
+                        locationData.loading = false;
+                      });
+                    } else {
+                      print('permisiion not allowed');
+                      setState(() {
+                        locationData.loading = true;
+                      });
+                    }
+                  },
                 ),
                 FlatButton(
                   child: RichText(

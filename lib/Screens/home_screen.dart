@@ -13,18 +13,32 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        // ignore: deprecated_member_use
-        child: RaisedButton(
-          onPressed: () {
-            FirebaseAuth.instance.signOut().then((value) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => WelcomeScreen(),
-                  ));
-            });
-          },
-          child: Text('signUp'),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ignore: deprecated_member_use
+            RaisedButton(
+              onPressed: () {
+                FirebaseAuth.instance.signOut().then(
+                  (value) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WelcomeScreen(),
+                        ));
+                  },
+                );
+              },
+              child: Text('signOut'),
+            ),
+            // ignore: deprecated_member_use
+            RaisedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, WelcomeScreen.id);
+              },
+              child: Text('Home Screen'),
+            ),
+          ],
         ),
       ),
     );

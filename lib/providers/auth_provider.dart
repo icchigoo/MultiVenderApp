@@ -12,16 +12,24 @@ class AuthProvider with ChangeNotifier {
   late String verificationId;
   String error = '';
   UserServices _userServicer = UserServices();
+  bool loading = false;
 
   Future<void> verifyPhone(BuildContext context, String number) async {
+    this.loading = true;
+    notifyListeners();
     final PhoneVerificationCompleted verificationCompleted =
         (PhoneAuthCredential credential) async {
+      this.loading = false;
+      notifyListeners();
       await _auth.signInWithCredential(credential);
     };
 
     final PhoneVerificationFailed verificationFailed =
         (FirebaseAuthException e) {
+      this.loading = false;
       print(e.code);
+      this.error = e.toString();
+      notifyListeners();
     };
 
     final PhoneCodeSent smsOtpSend = (String verId, int? resendToken) async {
@@ -40,6 +48,8 @@ class AuthProvider with ChangeNotifier {
         },
       );
     } catch (e) {
+      this.error = e.toString();
+      notifyListeners();
       print(e);
     }
   }
@@ -85,13 +95,10 @@ class AuthProvider with ChangeNotifier {
 
                     _createUser(id: user!.uid, number: user.phoneNumber!);
 
-                    if (user == null) {
+                    if (user != null) {
                       Navigator.of(context).pop();
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
-                        ),
-                      );
+
+                      Navigator.pushReplacementNamed(context, HomeScreen.id);
                     } else {
                       print(' login Faild');
                     }
