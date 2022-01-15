@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names, avoid_types_as_parameter_names, empty_catches, unused_field, prefer_final_fields, avoid_print, unused_local_variable, await_only_futures, prefer_function_declarations_over_variables, unnecessary_this, prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, unnecessary_null_comparison, unused_element
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -14,7 +15,12 @@ class AuthProvider with ChangeNotifier {
   UserServices _userServicer = UserServices();
   bool loading = false;
 
-  Future<void> verifyPhone(BuildContext context, String number) async {
+  Future<void> verifyPhone(
+      {BuildContext? context,
+      String? number,
+      double? latitude,
+      double? longitude,
+      String? address}) async {
     this.loading = true;
     notifyListeners();
     final PhoneVerificationCompleted verificationCompleted =
@@ -34,12 +40,12 @@ class AuthProvider with ChangeNotifier {
 
     final PhoneCodeSent smsOtpSend = (String verId, int? resendToken) async {
       this.verificationId = verId;
-      smsOtpDialog(context, number);
+      smsOtpDialog(context!, number!);
     };
 
     try {
       _auth.verifyPhoneNumber(
-        phoneNumber: number,
+        phoneNumber: number!,
         verificationCompleted: verificationCompleted,
         verificationFailed: verificationFailed,
         codeSent: smsOtpSend,
@@ -118,10 +124,31 @@ class AuthProvider with ChangeNotifier {
         });
   }
 
-  void _createUser({required String id, required String number}) {
+  void _createUser(
+      {required String id,
+      required String number,
+      double? latitude,
+      double? longitude,
+      String? address}) {
     _userServicer.crateUserData({
       'id': id,
       'number': number,
+      'Location': GeoPoint(latitude!, longitude!)
+      'address': address!,
+    });
+  }
+
+  void updateUser(
+      {required String id,
+      required String number,
+      double? latitude,
+      double? longitude,
+      String? address}) {
+    _userServicer.crateUserData({
+      'id': id,
+      'number': number,
+      'location': GeoPoint(latitude!, longitude!).toString(),
+      'address': address!,
     });
   }
 }

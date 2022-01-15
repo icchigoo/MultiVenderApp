@@ -79,7 +79,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 });
                                 String number =
                                     '+977${_phoneNumberController.text}';
-                                auth.verifyPhone(context, number).then((value) {
+                                auth
+                                    .verifyPhone(
+                                  context: context,
+                                  number: number,
+                                  latitude: locationData.latitiude,
+                                  longitude: locationData.longitude,
+                                  address: locationData.selectedAddress,
+                                )
+                                    .then((value) {
                                   _phoneNumberController.clear();
                                   auth.loading = false;
                                 });
