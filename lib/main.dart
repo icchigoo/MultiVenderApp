@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:foodie_app/Screens/home_screen.dart';
+import 'package:foodie_app/Screens/login_scrren.dart';
 import 'package:foodie_app/Screens/map_screen.dart';
 import 'package:foodie_app/Screens/splash_screen.dart';
 
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         HomeScreen.id: (context) => HomeScreen(),
         WelcomeScreen.id: (context) => WelcomeScreen(),
         MapScreen.id: (context) => MapScreen(),
+        LoginScreen.id: (context) => LoginScreen(),
       },
     );
   }

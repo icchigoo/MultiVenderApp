@@ -22,7 +22,9 @@ class LocationProvider with ChangeNotifier {
 
       final coordinates = new Coordinates(this.latitiude, this.longitude);
       final addresses =
-          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+          await Geocoder.google('AIzaSyBjY-qWp7pN2vyVnhrOZIp0Bc6Ay8jr12I')
+              .findAddressesFromCoordinates(coordinates);
+      //await Geocoder.local.findAddressesFromCoordinates(coordinates);
       this.selectedAddress = addresses.first;
 
       this.permissionAllowed = true;
@@ -39,10 +41,10 @@ class LocationProvider with ChangeNotifier {
   }
 
   Future<void> getMoveCamera() async {
-    // final coordinates = new Coordinates(this.latitiude, this.longitude);
-    // final addresses =
-    //     await Geocoder.local.findAddressesFromCoordinates(coordinates);
-    // this.selectedAddress = addresses.first;
+    final coordinates = new Coordinates(this.latitiude, this.longitude);
+    final addresses =
+        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    this.selectedAddress = addresses.first;
     print("${selectedAddress.featureName} : ${selectedAddress.addressLine}");
   }
 }
